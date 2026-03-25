@@ -11,29 +11,43 @@ jobs:
     permissions:
       security-events: write
 
-    steps:
-    - uses: actions/checkout@v3
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
-    # SAST - CodeQL
+    steps:
+    # checkout
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    # CodeQL
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
+      uses: github/codeql-action/init@v4
       with:
         languages: javascript
 
     - name: Autobuild
-      uses: github/codeql-action/autobuild@v3
+      uses: github/codeql-action/autobuild@v4
 
     - name: Run CodeQL
-      uses: github/codeql-action/analyze@v3
+      uses: github/codeql-action/analyze@v4
 
-    # Secret scanning (simple grep to guarantee detection)
+    # Secret scan
     - name: Secret Scan
       run: |
-        grep -r "PASSWORD" . && echo "Hardcoded secret found"
-        grep -r "API_KEY" . && echo "API key exposed"
+        echo "Running secret scan..."
+        
+        if grep -r "PASSWORD" .; then
+          echo "Hardcoded password found"
+          exit 1
+        fi
+
+        if grep -r "API_KEY" .; then
+          echo "API key exposed"
+          exit 1
+        fi
 
     # DAST
     - name: OWASP ZAP Scan
-      uses: zaproxy/action-baseline@v0.10.0
+      uses: zaproxy/action-baseline@v0.11.0
       with:
         target: ${{ secrets.APP_URL }}
