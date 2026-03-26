@@ -1,0 +1,5 @@
+{
+    "appService.showBuildDuringDeployPrompt": false,
+    "appService.defaultWebAppToDeploy": "/subscriptions/a35c0697-a486-4992-b6a8-b2724219af48/resourceGroups/cdru-cloudsec/providers/Microsoft.Web/sites/avishikta-cloudsec",
+    "appService.deploySubpath": "."
+}
